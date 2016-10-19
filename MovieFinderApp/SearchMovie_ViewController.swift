@@ -11,18 +11,10 @@ import Alamofire
 import SwiftyJSON
 import KRProgressHUD
 class SearchMovie_ViewController: UIViewController,UITextFieldDelegate {
-    let mtitle:String! = nil
-    let mgenre:String! = nil
-    let mReleaseDate:String! = nil
-    let mPlot:String! = nil
-    let mrating:String! = nil
-    //    Title, Genre, Release date, Plot (short version) and rating.
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-//        self.view.backgroundColor = UIColor(patternImage: UIImage(named: "background")!)
-        self.view.backgroundColor = UIColor().HexToColor("222222")
+        self.view.backgroundColor = UIColor(patternImage: UIImage(named: "background")!)
         self.view.addSubview(searchBar)
         self.view.addSubview(container)
         self.searchBar.delegate = self
@@ -35,8 +27,8 @@ class SearchMovie_ViewController: UIViewController,UITextFieldDelegate {
     
     func makeRequestPost(searchText:String){
         self.startLoading()
-        let enText = searchText.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
-        let api = "http://omdbapi.com/?t=" + enText!
+        let encodingText = searchText.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+        let api = "http://omdbapi.com/?t=" + encodingText!
         Alamofire.request(api,method:.get)
             .responseJSON { response in
                 //print(response.result)   // result of response serialization
@@ -44,36 +36,31 @@ class SearchMovie_ViewController: UIViewController,UITextFieldDelegate {
                     print(response.result.error!)
                     return
                 }
-                self.endLoading()
-                if let json = response.data {
-                    
+                
+                if let json = response.data{
                     let json_Data = JSON(data:json)
                     let response = json_Data["Response"].string!
-                    print("JSONData:\(json_Data)")
-
+                  
                 if response == "True"{
-                    print("JSONData:\(json_Data)")
-                    
-                    UIView.animate(withDuration: 1.8, animations: {
                     self.title_Label.text = "Title: " + json_Data["Title"].string!
                     self.genre_Label.text = "Genre: " + json_Data["Genre"].string!
                     self.releaseDate_Label.text = "Release Date:    " + json_Data["Released"].string!
                     self.rating_Label.text = "Rating:   " + json_Data["Rated"].string!
                     self.plot_Label.text = "Plot:   " + json_Data["Plot"].string!
-                    })
-                    
+                    self.endLoading()
                 }else {
-                    let error = json_Data["Error"].string!
                     
+                    self.endLoading()
+                    let error = json_Data["Error"].string!
                     let alertController = UIAlertController(title: "", message: error, preferredStyle: .alert)
                     let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
                     })
+                   
                     alertController.addAction(ok)
                     self.present(alertController, animated: true, completion: nil)
                     }
                 }
-                
-                
+     
         }
         
     }
@@ -83,18 +70,17 @@ class SearchMovie_ViewController: UIViewController,UITextFieldDelegate {
         return true
     }
     func textFieldDidEndEditing(_ textField: UITextField) {
-         print("SearchText:\(textField.text!)")
          makeRequestPost(searchText: textField.text!)
     }
+    
     
     let searchBar:UITextField = {
         let sb = UITextField()
         sb.translatesAutoresizingMaskIntoConstraints = false
-//        sb.backgroundColor = UIColor.lightGray
-        sb.layer.borderWidth = 1.0
-        sb.layer.borderColor = UIColor().HexToColor("cbbcac").cgColor
+        sb.layer.borderWidth = 2.0
+        sb.layer.borderColor = UIColor.white.cgColor
         sb.placeholder = "Search here any Movie"
-        sb.layer.cornerRadius = 3.0
+//        sb.layer.cornerRadius = 3.0
         sb.translatesAutoresizingMaskIntoConstraints = false
         sb.layer.shadowColor = UIColor.white.cgColor
         sb.layer.shadowOffset = CGSize(width:3.0, height:2.0)
@@ -119,7 +105,6 @@ class SearchMovie_ViewController: UIViewController,UITextFieldDelegate {
     let title_Label:UILabel = {
         let sb = UILabel()
         sb.translatesAutoresizingMaskIntoConstraints = false
-        //        sb.backgroundColor = UIColor.lightGray
         sb.translatesAutoresizingMaskIntoConstraints = false
         sb.textAlignment = .left
         sb.textColor = UIColor.white
@@ -131,7 +116,6 @@ class SearchMovie_ViewController: UIViewController,UITextFieldDelegate {
     let genre_Label:UILabel = {
         let sb = UILabel()
         sb.translatesAutoresizingMaskIntoConstraints = false
-        //        sb.backgroundColor = UIColor.lightGray
         sb.translatesAutoresizingMaskIntoConstraints = false
         sb.textAlignment = .left
         sb.textColor = UIColor.white
@@ -143,7 +127,6 @@ class SearchMovie_ViewController: UIViewController,UITextFieldDelegate {
     let releaseDate_Label:UILabel = {
         let sb = UILabel()
         sb.translatesAutoresizingMaskIntoConstraints = false
-        //        sb.backgroundColor = UIColor.lightGray
         sb.translatesAutoresizingMaskIntoConstraints = false
         sb.textAlignment = .left
         sb.textColor = UIColor.white
@@ -155,7 +138,6 @@ class SearchMovie_ViewController: UIViewController,UITextFieldDelegate {
     let rating_Label:UILabel = {
         let sb = UILabel()
         sb.translatesAutoresizingMaskIntoConstraints = false
-        //        sb.backgroundColor = UIColor.lightGray
         sb.translatesAutoresizingMaskIntoConstraints = false
         sb.textAlignment = .left
         sb.textColor = UIColor.white
@@ -168,7 +150,6 @@ class SearchMovie_ViewController: UIViewController,UITextFieldDelegate {
     let plot_Label:UILabel = {
         let sb = UILabel()
         sb.translatesAutoresizingMaskIntoConstraints = false
-        //        sb.backgroundColor = UIColor.lightGray
         sb.translatesAutoresizingMaskIntoConstraints = false
         sb.textAlignment = .left
         sb.textColor = UIColor.white
@@ -186,7 +167,6 @@ class SearchMovie_ViewController: UIViewController,UITextFieldDelegate {
         searchBar.topAnchor.constraint(equalTo:self.view.topAnchor,constant:32).isActive = true
         searchBar.rightAnchor.constraint(equalTo:self.view.rightAnchor,constant:-16).isActive = true
         searchBar.heightAnchor.constraint(equalToConstant: 40).isActive = true
-
         
         container.leftAnchor.constraint(equalTo:self.view.leftAnchor,constant:16).isActive = true
         container.topAnchor.constraint(equalTo:self.searchBar.bottomAnchor,constant:16).isActive = true
@@ -221,14 +201,12 @@ class SearchMovie_ViewController: UIViewController,UITextFieldDelegate {
         plot_Label.leftAnchor.constraint(equalTo:self.view.leftAnchor,constant:16).isActive = true
         plot_Label.topAnchor.constraint(equalTo:self.rating_Label.bottomAnchor,constant:16).isActive = true
         plot_Label.rightAnchor.constraint(equalTo:self.view.rightAnchor,constant:-16).isActive = true
-        
-    }
+}
   
-func startLoading(){
+    func startLoading(){
         KRProgressHUD.show()
         KRProgressHUD.set(activityIndicatorStyle: .black)
     }
-    
     func endLoading(){
         let delay = DispatchTime.now()
         DispatchQueue.main.asyncAfter(deadline: delay) {
@@ -238,29 +216,21 @@ func startLoading(){
     func mask(){
         KRProgressHUD.set(style: .white)
     }
-
-    
 }
 extension UIColor{
-    
     func HexToColor(_ hexString: String, alpha:CGFloat? = 1.0) -> UIColor {
-        // Convert hex string to an integer
         let hexint = Int(self.intFromHexString(hexString))
         let red = CGFloat((hexint & 0xff0000) >> 16) / 255.0
         let green = CGFloat((hexint & 0xff00) >> 8) / 255.0
         let blue = CGFloat((hexint & 0xff) >> 0) / 255.0
         let alpha = alpha!
-        // Create color object, specifying alpha as well
         let color = UIColor(red: red, green: green, blue: blue, alpha: alpha)
         return color
     }
-    
     func intFromHexString(_ hexStr: String) -> UInt32 {
         var hexInt: UInt32 = 0
         let scanner: Scanner = Scanner(string: hexStr)
-        // Tell scanner to skip the # character
         scanner.charactersToBeSkipped = CharacterSet(charactersIn: "#") as CharacterSet
-        // Scan hex value
         scanner.scanHexInt32(&hexInt)
         return hexInt
     }
