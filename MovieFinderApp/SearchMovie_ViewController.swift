@@ -31,7 +31,6 @@ class SearchMovie_ViewController: UIViewController,UITextFieldDelegate {
         let api = "http://omdbapi.com/?t=" + encodingText!
         Alamofire.request(api,method:.get)
             .responseJSON { response in
-                //print(response.result)   // result of response serialization
                 guard response.result.error == nil else {
                     print(response.result.error!)
                     return
@@ -70,9 +69,15 @@ class SearchMovie_ViewController: UIViewController,UITextFieldDelegate {
         return true
     }
     func textFieldDidEndEditing(_ textField: UITextField) {
+        if textField.text == ""{
+        return
+        }
          makeRequestPost(searchText: textField.text!)
     }
     
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.returnKeyType = UIReturnKeyType.search
+    }
     
     let searchBar:UITextField = {
         let sb = UITextField()
@@ -80,7 +85,6 @@ class SearchMovie_ViewController: UIViewController,UITextFieldDelegate {
         sb.layer.borderWidth = 2.0
         sb.layer.borderColor = UIColor.white.cgColor
         sb.placeholder = "Search here any Movie"
-//        sb.layer.cornerRadius = 3.0
         sb.translatesAutoresizingMaskIntoConstraints = false
         sb.layer.shadowColor = UIColor.white.cgColor
         sb.layer.shadowOffset = CGSize(width:3.0, height:2.0)
